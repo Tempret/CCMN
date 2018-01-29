@@ -35,22 +35,47 @@ var ccmn = {
                 "Authorization": "Basic " + btoa(username + ":" + password)
             },
             success: function (data) {
-                callback(data, arguments[1]);
+                callback(data);
             }
         });
     },
 
-    randomArray : function (length, max) {
-        return Array.apply(null, Array(length)).map(function() {
-            return Math.round(Math.random() * max);
+    getTableTotalVisitors: function (callback) {
+
+        var data_send = {
+            'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
+            'login': $('#login').val(),
+            'pass': $('#presence').val(),
+            'when': $('#date-selection').val(),
+            'site_id': ccmn.siteId
+        };
+
+        console.log(data_send);
+
+        $.ajax({
+            url: 'get_table_total_visitors/',
+            type: 'POST',
+            data: data_send,
+            dataType: "json",
+            success: function (data) {
+                callback(data);
+            }
         });
+    },
+
+    setTableTotalVisitors: function (data) {
+        console.log(data);
+
+        $('#connected').text(data.connected);
+        $('#passerby').text(data.passerby);
+        $('#visitors').text(data.visitor);
     },
 
     getTimeArray : function() {
         var arr = [];
         var item;
 
-        for(var i = 0; i <= 24; i++) {
+        for(var i = 0; i < 24; i++) {
             if (i < 10)
                 item = '0' + i + '.00';
             else
@@ -60,21 +85,36 @@ var ccmn = {
         return arr;
     },
 
-    setTableTotalVisitors: function(data, cellId) {
-        $(cellId).text(data[0]);
+    getRandomValues: function(min, max, howMany) {
+        arr = [];
+        var value;
+
+        for (var i = 0; i < howMany; i++) {
+            value = Math.random() * (max - min) + min;
+            arr.push(Math.floor(value));
+        };
+        return arr;
+    },
+
+    getColorArray: function(color, length) {
+        arr = [];
+
+        for (var i = 0; i < length; i++)
+            arr.push(color);
+
+        return arr;
     },
 
     chart: NaN,
-
-
-
 };
+
+ccmn.makeApiRequest('cisco-presence.unit.ua/api/config/v1/sites', ccmn.apis[1], 'GET', ccmn.setSiteId, NaN);
 
 $(document).ready(function() {
     inAnimation = 'fadeInRightBig';
-    ccmn.makeApiRequest('cisco-presence.unit.ua/api/config/v1/sites', ccmn.apis[1], 'GET', ccmn.setSiteId, NaN);
 
-    ccmn.makeApiRequest('');
+    ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+
 
     /* DASHBOARDS ANIMATION */
     $('.panel-item').on("click", function (event) {
@@ -106,16 +146,17 @@ $(document).ready(function() {
             $('#custom-date').removeClass('hide');      /* | */
         else                                            /* | */
             $('#custom-date').addClass('hide');         /*---*/
-
     });
     /* date select change event END */
 
 
+    /* DATA RELOAD LOOP */
+     var timerId = setInterval(function() {
+        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
 
 
-    var timerId = setInterval(function() {
-        ccmn.makeApiRequest('cisco-presence.unit.ua/api/presence/v1/connected/count/today', ccmn.apis[1], 'GET', ccmn.setTotalVisitors, {siteId:ccmn.siteId});
-    }, 5000);
+     }, 8000);
+    /* data reload loop END */
 
     /* charts END*/
     var ctx = document.getElementById("myChart").getContext('2d');
@@ -123,87 +164,21 @@ $(document).ready(function() {
         type: 'bar',
         data: {
             labels: ccmn.getTimeArray(),
-            datasets: [{
-                label: '# of Votes',
-                data: [46, 28, 9, 63, 9, 1, 37, 75, 32, 89, 74, 2, 54, 70, 69, 23, 57, 47, 72, 55],
-                backgroundColor: [
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)',
-                    'rgba(255, 99, 132, 0.2)'
-                ],
-                borderColor: [
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)',
-                    'rgba(255,99,132,1)'
-                ],
-                borderWidth: 1
-            },
-            {
-                label: '# of Votes',
-                data: [46, 28, 9, 63, 9, 1, 37, 75, 32, 89, 74, 2, 54, 70, 69, 23, 57, 47, 72, 55],
-                backgroundColor: [
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)',
-                    'rgba(54, 162, 235, 0.2)'
-                ],
-                borderColor: [
-
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-                    'rgba(54, 162, 235, 1)',
-
-
-                ],
-                borderWidth: 1
-            }
+            datasets: [
+                {
+                    label: 'Hourly count of connected visitors',
+                    data: ccmn.getRandomValues(1, 100, 24),
+                    backgroundColor: ccmn.getColorArray('rgba(255, 99, 132, 0.2)', 24),
+                    borderColor: ccmn.getColorArray('rgba(255,99,132,1)', 24),
+                    borderWidth: 1
+                },
+                {
+                    label: '# of Votes',
+                    data: ccmn.getRandomValues(1, 100, 24),
+                    backgroundColor: ccmn.getColorArray('rgba(54, 162, 235, 0.2)', 24),
+                    borderColor: ccmn.getColorArray('rgba(54, 162, 235, 1)', 24),
+                    borderWidth: 1
+                }
             ]
         },
         options: {
