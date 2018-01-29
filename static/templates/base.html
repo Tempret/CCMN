@@ -135,8 +135,11 @@
                                         </tr>
                                     </tbody>
                                 </table>
-                                <p>Hourly report</p>
-                                <canvas id="myChart" width="300" height="200"></canvas>
+                                <div class="total-chart-container">
+                                    <p>Hourly report</p>
+                                    <canvas id="totalChart" width="300" height="200"></canvas>
+                                </div>
+
                             </div>
                             <div id="dash-floor-map" class="p-5 dashboard-item hide">
                                 <span>Floor map</span>
@@ -171,8 +174,7 @@
             </div>
         </footer>
     </div>
-    <form id="csrf_getting_form" class="hidden">{% csrf_token %}
-    </form>
+    <form id="csrf_getting_form" class="hidden">{% csrf_token %}</form>
 
     <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
