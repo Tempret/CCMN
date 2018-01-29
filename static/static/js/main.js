@@ -50,6 +50,11 @@ var ccmn = {
             'site_id': ccmn.siteId
         };
 
+        if ($('#date-selection').val() == 'custom') {
+            data_send.date = $('#custom-date').val();
+        }
+
+
         console.log(data_send);
 
         $.ajax({
@@ -113,9 +118,6 @@ ccmn.makeApiRequest('cisco-presence.unit.ua/api/config/v1/sites', ccmn.apis[1], 
 $(document).ready(function() {
     inAnimation = 'fadeInRightBig';
 
-    ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
-
-
     /* DASHBOARDS ANIMATION */
     $('.panel-item').on("click", function (event) {
         var cur = event.target;
@@ -146,16 +148,22 @@ $(document).ready(function() {
             $('#custom-date').removeClass('hide');      /* | */
         else                                            /* | */
             $('#custom-date').addClass('hide');         /*---*/
+
+        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
     });
     /* date select change event END */
+
+    $('#custom-date').change(function () {
+        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+    });
 
 
     /* DATA RELOAD LOOP */
      var timerId = setInterval(function() {
-        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+//        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
 
 
-     }, 8000);
+     }, 3000);
     /* data reload loop END */
 
     /* charts END*/
