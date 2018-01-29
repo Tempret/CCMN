@@ -1,0 +1,194 @@
+{% load staticfiles %}
+
+<!doctype html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport"
+          content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+    <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.min.css' %}">
+    <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+    <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
+    <style>
+        .floor-map::before {
+            background-image: url({% static 'media/icons/dusk/floor_map.png' %});
+        }
+        .total-visitors::before {
+            background-image: url({% static 'media/icons/dusk/total_visitors.png' %});
+        }
+        .analitics::before {
+            background-image: url({% static 'media/icons/dusk/analitics.png' %});
+        }
+        .presence::before {
+            background-image: url({% static 'media/icons/dusk/presence.png' %});
+        }
+        .fcasting-vis::before {
+            background-image: url({% static 'media/icons/dusk/forecasting_visitors.png' %});
+        }
+        .correlation::before {
+            background-image: url({% static 'media/icons/dusk/correlations.png' %});
+        }
+        .floor-congestion::before {
+            background-image: url({% static 'media/icons/dusk/floor_congestion.png' %});
+        }
+    </style>
+
+</head>
+<body>
+    <div id="wrapper">
+        <nav>
+            <div class="container">
+                <div id="menu" class="row">
+                    <div class="col-3 d-flex justify-content-center align-items-center">
+                        <span class="project-name">CCMN project</span>
+                    </div>
+                    <div class="col-2 d-flex justify-content-center align-items-center">
+                        <!--<a class="content">Login:</a>-->
+                        <input id="login" content="Login" type="text" placeholder="Login" value="RO">
+                    </div>
+                    <div class="col-2 d-flex justify-content-center align-items-center">
+                        <!--<a class="content">Password:</a>-->
+                        <input id="presence" content="password" type="password" placeholder="Presence pass" value="Passw0rd">
+                    </div>
+                    <div class="col-2 d-flex justify-content-center align-items-center">
+                        <!--<a class="content">Password:</a>-->
+                        <input id="locate" content="password" type="password" placeholder="Locate pass" value="just4reading">
+                    </div>
+                    <div class="col-2 justify-content-center date-select">
+                        <!--<label for="datepicker" class="datepicker-label">Date</label>-->
+                        <!--<input type="date" id="datepicker">-->
+
+
+
+                        <!--<a class="content"></a>-->
+                    </div>
+
+
+                </div>
+            </div>
+        </nav>
+        <div class="container">
+            <div class="row">
+                <div class="col-3 left-col">
+                    <div class="container">
+                        <div class="panel d-flex flex-column">
+                            <div class="p-2 panel-item">
+                                <span class="menu-icons total-visitors">Total visitors</span>
+                                <span class="menu-icons"></span>
+                            </div>
+                            <div class="p-2 panel-item">
+                                <span class="menu-icons floor-map">Floor map</span>
+
+                            </div>
+                            <div class="p-2 panel-item">
+                                <span class="menu-icons analitics">Analytics</span>
+
+                            </div>
+                            <div class="p-2 panel-item">
+                                <span class="menu-icons presence">Presence</span>
+
+                            </div>
+                            <div class="p-2 panel-item">
+                                <span class="menu-icons fcasting-vis">Forecasting</span>
+
+                            </div>
+                            <div class="p-2 panel-item">
+                                <span class="menu-icons correlation">Carrelations</span>
+
+                            </div>
+                            <div class="p-2 panel-item">
+                                <span class="menu-icons floor-congestion">Floor congestion</span>
+                            </div>
+
+                            <select name="date-option" class="date-selection" id="date-selection">
+                                <option value="today">Today</option>
+                                <option value="yesterday">Yesterday</option>
+                                <option value="3-day">Last 3 days</option>
+                                <option value="7-day">Last 7 days</option>
+                                <option value="this-month">This month</option>
+                                <option value="custom">Custom</option>
+                            </select>
+                            <input id="custom-date" type="date" class="date-selection hide">
+                        </div>
+                    </div>
+                </div>
+                <div class="col content">
+                    <div class="container">
+                        <div class="dashboard-container d-flex flex-column">
+                            <div id="dash-total-visitors" class="p-5 dashboard-item visible">
+                                <h1>Total visitors</h1>
+
+                                <p>Daily report</p>
+                                <table class="total-visitors-table">
+                                    <thead>
+                                    <tr>
+                                        <th>Description</th>
+                                        <th>Count</th>
+                                    </tr>
+                                    </thead>
+                                    <tbody>
+                                        <tr>
+                                            <td>Connected visitors seen today until now</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Passersby seen today until now</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Visitors seen today until now</td>
+                                            <td></td>
+                                        </tr>
+                                        <tr>
+                                            <td>Hour that had peak visitors today</td>
+                                            <td></td>
+                                        </tr>
+                                    </tbody>
+                                </table>
+                                <p>Hourly report</p>
+                                <canvas id="myChart" width="300" height="200"></canvas>
+                            </div>
+                            <div id="dash-floor-map" class="p-5 dashboard-item hide">
+                                <span>Floor map</span>
+                            </div>
+                            <div id="dash-analytics" class="p-5 dashboard-item hide">
+                                <span>Analytics</span>
+                            </div>
+                            <div id="dash-presence" class="p-5 dashboard-item hide">
+                                <span>Presence</span>
+                            </div>
+                            <div id="dash-forecasting" class="p-5 dashboard-item hide">
+                                <span>Forecasting</span>
+                            </div>
+                            <div id="dash-carrelations" class="p-5 dashboard-item hide">
+                                <span>Carrelations</span>
+                            </div>
+                            <div id="dash-floor-congestion" class="p-5 dashboard-item hide">
+                                <span>Floor congestion</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <footer>
+            <div class="container">
+                <div class="row">
+                    <div class="col-1 footer-item">
+                        <span class="content">Footer</span>
+                    </div>
+                </div>
+            </div>
+        </footer>
+    </div>
+
+    <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
+
+</body>
+</html>
