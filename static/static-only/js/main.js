@@ -2,23 +2,9 @@ var ccmn = {
 
     apis : ['locate', 'presence'],
 
-    table_data_total : {
-        'connected': null,
-        'passerby': null,
-        'visitors': null,
-        'peak': null
-    },
-
-    siteId : NaN,
-
     setSiteId : function (data) {
         ccmn.siteId = data[0].aesUId;
         console.log("Site id:", data[0].aesUId);
-    },
-
-    setTotalVisitors : function (data) {
-        // console.log(data);
-        $('.total-visitors').next().text(data);
     },
 
     makeApiRequest : function (url, api, type, callback, args) {
@@ -50,7 +36,11 @@ var ccmn = {
             'site_id': ccmn.siteId
         };
 
-        console.log(data_send);
+        if ($('#date-selection').val() == 'custom') {
+            data_send.date = $('#custom-date').val();
+        }
+
+//        console.log(data_send);
 
         $.ajax({
             url: 'get_table_total_visitors/',
@@ -64,11 +54,61 @@ var ccmn = {
     },
 
     setTableTotalVisitors: function (data) {
-        console.log(data);
+
+//        console.log(data);
 
         $('#connected').text(data.connected);
         $('#passerby').text(data.passerby);
         $('#visitors').text(data.visitor);
+    },
+
+    getHourlyTotalVisitors: function (callback) {
+         var data_send = {
+            'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
+            'login': $('#login').val(),
+            'pass': $('#presence').val(),
+            'when': $('#date-selection').val(),
+            'site_id': ccmn.siteId
+        };
+
+        if ($('#date-selection').val() == 'custom') {
+            data_send.date = $('#custom-date').val();
+        }
+
+//        console.log(data_send);
+
+        $.ajax({
+            url: 'get_hourly_total_visitors/',
+            type: 'POST',
+            data: data_send,
+            dataType: "json",
+            success: function (data) {
+                callback(data);
+            }
+        });
+    },
+
+    setChartHourlyVisitors: function (data) {
+//        console.log(data);
+
+        if (!data.connected || !data.passerby || !data.visitor) {
+            ccmn.totalChart.data.datasets[0].data = [0];
+            ccmn.totalChart.data.datasets[1].data = [0];
+            ccmn.totalChart.data.datasets[2].data = [0];
+        } else {
+            data.connected = JSON.parse(data.connected);
+            data.passerby = JSON.parse(data.passerby);
+            data.visitor = JSON.parse(data.visitor);
+
+            var connected = Object.values(data.connected);
+            var passerby = Object.values(data.passerby);
+            var visitor = Object.values(data.visitor);
+
+            ccmn.totalChart.data.datasets[0].data = connected;
+            ccmn.totalChart.data.datasets[1].data = passerby;
+            ccmn.totalChart.data.datasets[2].data = visitor;
+        }
+        ccmn.totalChart.update();
     },
 
     getTimeArray : function() {
@@ -105,7 +145,6 @@ var ccmn = {
         return arr;
     },
 
-    chart: NaN,
 };
 
 ccmn.makeApiRequest('cisco-presence.unit.ua/api/config/v1/sites', ccmn.apis[1], 'GET', ccmn.setSiteId, NaN);
@@ -113,8 +152,7 @@ ccmn.makeApiRequest('cisco-presence.unit.ua/api/config/v1/sites', ccmn.apis[1], 
 $(document).ready(function() {
     inAnimation = 'fadeInRightBig';
 
-    ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
-
+    console.log(ccmn.siteId);
 
     /* DASHBOARDS ANIMATION */
     $('.panel-item').on("click", function (event) {
@@ -142,41 +180,73 @@ $(document).ready(function() {
     $('#date-selection').change(function () {
         var value = $(this).val();
 
-        if (value == 'custom')                          /*  Hide custom datepicher if custom select is active */
+        if (value == 'custom')                          /*  Hide custom datepicker if custom select is active */
             $('#custom-date').removeClass('hide');      /* | */
         else                                            /* | */
             $('#custom-date').addClass('hide');         /*---*/
+
+        if (value != 'custom') {
+            ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+            if (value == '3days' || value == 'lastweek' || value == 'lastmonth') {
+                $('.total-chart-container').addClass('hide');
+//                console.log(value);
+            } else {
+                $('.total-chart-container').removeClass('hide');
+                ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
+            }
+        };
     });
     /* date select change event END */
 
+    $('#custom-date').change(function () {
+        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+        $('.total-chart-container').removeClass('hide');
+        ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
+    });
+
 
     /* DATA RELOAD LOOP */
-     var timerId = setInterval(function() {
+    var timerWrap = setInterval(function() {
         ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+        ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
 
 
-     }, 8000);
+        var timerId = setInterval(function() {
+            ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+            ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
+
+        }, 15000);
+        clearInterval(timerWrap);
+    }, 500);
+
     /* data reload loop END */
 
     /* charts END*/
-    var ctx = document.getElementById("myChart").getContext('2d');
-    var myChart = new Chart(ctx, {
+    var ctx = document.getElementById("totalChart").getContext('2d');
+    ccmn.totalChart = new Chart(ctx, {
         type: 'bar',
         data: {
             labels: ccmn.getTimeArray(),
             datasets: [
                 {
                     label: 'Hourly count of connected visitors',
-                    data: ccmn.getRandomValues(1, 100, 24),
+                    data: ccmn.getRandomValues(0, 0, 24),
                     backgroundColor: ccmn.getColorArray('rgba(255, 99, 132, 0.2)', 24),
                     borderColor: ccmn.getColorArray('rgba(255,99,132,1)', 24),
                     borderWidth: 1
                 },
                 {
-                    label: '# of Votes',
-                    data: ccmn.getRandomValues(1, 100, 24),
+                    label: 'Hourly count of passerby visitors',
+                    data: ccmn.getRandomValues(0, 0, 24),
                     backgroundColor: ccmn.getColorArray('rgba(54, 162, 235, 0.2)', 24),
                     borderColor: ccmn.getColorArray('rgba(54, 162, 235, 1)', 24),
+                    borderWidth: 1
+                },
+                {
+                    label: 'Hourly count visitors',
+                    data: ccmn.getRandomValues(0, 0, 24),
+                    backgroundColor: ccmn.getColorArray('rgba(255, 206, 86, 0.2)', 24),
+                    borderColor: ccmn.getColorArray('rgba(255, 206, 86, 1)', 24),
                     borderWidth: 1
                 }
             ]
@@ -191,25 +261,4 @@ $(document).ready(function() {
             }
         }
     });
-    ccmn.chart = myChart;
 });
-
-
-// backgroundColor: [
-//     'rgba(255, 99, 132, 0.2)',
-//     'rgba(54, 162, 235, 0.2)',
-//     'rgba(255, 206, 86, 0.2)',
-//     'rgba(75, 192, 192, 0.2)',
-//     'rgba(153, 102, 255, 0.2)',
-//     'rgba(255, 159, 64, 0.2)'
-// ],
-//     borderColor: [
-//     'rgba(255,99,132,1)',
-//     'rgba(54, 162, 235, 1)',
-//     'rgba(255, 206, 86, 1)',
-//     'rgba(75, 192, 192, 1)',
-//     'rgba(153, 102, 255, 1)',
-//     'rgba(255, 159, 64, 1)'
-// ],
-
-

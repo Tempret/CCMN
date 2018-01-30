@@ -142,7 +142,22 @@
 
                             </div>
                             <div id="dash-floor-map" class="p-5 dashboard-item hide">
-                                <span>Floor map</span>
+                                <h1>Floor map</h1>
+
+                                <select name="mac-addr-option" class="date-selection" id="mac-addr-selection">
+                                    <option value="mac1">j4:34:dc:w3:c8</option>
+                                    <option value="mac2">j4:34:dc:w3:c8</option>
+                                    <option value="mac3">j4:34:dc:w3:c8</option>
+                                    <option value="mac4">j4:34:dc:w3:c8</option>
+                                    <option value="mac5">j4:34:dc:w3:c8</option>
+                                    <option value="mac6">j4:34:dc:w3:c8</option>
+                                </select>
+                                <div class="mac-search-wrapper">
+                                    <input id="search-field" type="text" value="">
+                                    <label for="search-field">Mac address:</label>
+                                    <input type="button" value="Search">
+                                </div>
+
                             </div>
                             <div id="dash-analytics" class="p-5 dashboard-item hide">
                                 <span>Analytics</span>
@@ -175,7 +190,6 @@
         </footer>
     </div>
     <form id="csrf_getting_form" class="hidden">{% csrf_token %}</form>
-
     <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 
