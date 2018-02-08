@@ -6,7 +6,6 @@ from requests.auth import HTTPBasicAuth
 def index(request):
 	return render(request, 'base.html', locals())
 
-
 def get_table_total_visitors(request):
 	if request.method == 'POST':
 
@@ -70,7 +69,6 @@ def get_hourly_total_visitors(request):
 			args['date'] = request.POST['date']
 			when = ''
 
-
 		print(when, login, password, siteid)
 
 		url1 = 'https://cisco-presence.unit.ua/api/presence/v1/connected/hourly/' + when
@@ -101,3 +99,27 @@ def get_hourly_total_visitors(request):
 	else:
 		return JsonResponse({'err': 'Method should be POST'}, safe=False)
 
+def get_active_users_list(request):
+	if request.method == 'POST':
+		login = request.POST['login']
+		password = request.POST['pass']
+
+		auth = HTTPBasicAuth(login, password)
+
+		url = 'https://cisco-cmx.unit.ua/api/location/v2/clients'
+
+		try:
+			response = get(url, auth=auth, verify=False, timeout=1)
+
+		except (Timeout, ConnectionError) as err:
+			print(err)
+			return JsonResponse({'err': err}, safe=False)
+
+		else:
+			if 'CMX: System error' in response.text:
+				return JsonResponse({'err': 'Autorisation failed'}, safe=False)
+
+			return JsonResponse(response.text, safe=False)
+
+	else:
+		return JsonResponse({'err': 'Method should be POST'}, safe=False)

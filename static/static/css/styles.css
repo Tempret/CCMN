@@ -239,3 +239,20 @@ label:after {
     top: 0;
     left: 0;
 }
+
+input:focus ~ label,
+input:valid ~ label {
+  top:-20px;
+  font-size:14px;
+  color:#5264AE;
+}
+
+input[type=text]:focus {
+  box-sizing: inherit;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  outline: none;
+  appearance: none;
+}
+

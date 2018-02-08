@@ -53,10 +53,10 @@
                     </div>
                     <div class="col-2 d-flex justify-content-center align-items-center">
                         <!--<a class="content">Password:</a>-->
-                        <input id="presence" content="password" type="password" placeholder="Presence pass" value="Passw0rd">
+                        <input id="presence_pass" content="password" type="password" placeholder="Presence pass" value="Passw0rd">
                     </div>
                     <div class="col-2 d-flex justify-content-center align-items-center">
-                        <input id="locate" content="password" type="password" placeholder="Locate pass" value="just4reading">
+                        <input id="locate_pass" content="password" type="password" placeholder="Locate pass" value="just4reading">
                     </div>
                 </div>
             </div>
@@ -70,7 +70,7 @@
                                 <span class="menu-icons total-visitors">Total visitors</span>
                                 <span class="menu-icons"></span>
                             </div>
-                            <div class="p-2 panel-item">
+                            <div class="p-2 panel-item panel-floor">
                                 <span class="menu-icons floor-map">Floor map</span>
 
                             </div>
@@ -145,17 +145,12 @@
                                 <h1>Floor map</h1>
 
                                 <select name="mac-addr-option" class="date-selection" id="mac-addr-selection">
-                                    <option value="mac1">j4:34:dc:w3:c8</option>
-                                    <option value="mac2">j4:34:dc:w3:c8</option>
-                                    <option value="mac3">j4:34:dc:w3:c8</option>
-                                    <option value="mac4">j4:34:dc:w3:c8</option>
-                                    <option value="mac5">j4:34:dc:w3:c8</option>
-                                    <option value="mac6">j4:34:dc:w3:c8</option>
+
                                 </select>
                                 <div class="mac-search-wrapper">
                                     <input id="search-field" type="text" value="">
-                                    <label for="search-field">Mac address:</label>
                                     <input type="button" value="Search">
+                                    <label for="search-field">Mac address:</label>
                                 </div>
 
                             </div>
@@ -190,6 +185,7 @@
         </footer>
     </div>
     <form id="csrf_getting_form" class="hidden">{% csrf_token %}</form>
+    <script type="text/javascript" src="{% static 'js/ccmn.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 

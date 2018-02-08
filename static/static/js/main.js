@@ -1,158 +1,7 @@
-var ccmn = {
-
-    apis : ['locate', 'presence'],
-
-    setSiteId : function (data) {
-        ccmn.siteId = data[0].aesUId;
-        console.log("Site id:", data[0].aesUId);
-    },
-
-    makeApiRequest : function (url, api, type, callback, args) {
-        var username = $('#login').val();
-        var password = $('#' + api).val();
-
-        $.ajax({
-            url: 'https://' + url,
-            type: type,
-            jsonp: 'jsonp_callback',
-            data: args,
-            dataType: "json",
-            headers: {
-                "Authorization": "Basic " + btoa(username + ":" + password)
-            },
-            success: function (data) {
-                callback(data);
-            }
-        });
-    },
-
-    getTableTotalVisitors: function (callback) {
-
-        var data_send = {
-            'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
-            'login': $('#login').val(),
-            'pass': $('#presence').val(),
-            'when': $('#date-selection').val(),
-            'site_id': ccmn.siteId
-        };
-
-        if ($('#date-selection').val() == 'custom') {
-            data_send.date = $('#custom-date').val();
-        }
-
-//        console.log(data_send);
-
-        $.ajax({
-            url: 'get_table_total_visitors/',
-            type: 'POST',
-            data: data_send,
-            dataType: "json",
-            success: function (data) {
-                callback(data);
-            }
-        });
-    },
-
-    setTableTotalVisitors: function (data) {
-
-//        console.log(data);
-
-        $('#connected').text(data.connected);
-        $('#passerby').text(data.passerby);
-        $('#visitors').text(data.visitor);
-    },
-
-    getHourlyTotalVisitors: function (callback) {
-         var data_send = {
-            'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
-            'login': $('#login').val(),
-            'pass': $('#presence').val(),
-            'when': $('#date-selection').val(),
-            'site_id': ccmn.siteId
-        };
-
-        if ($('#date-selection').val() == 'custom') {
-            data_send.date = $('#custom-date').val();
-        }
-
-//        console.log(data_send);
-
-        $.ajax({
-            url: 'get_hourly_total_visitors/',
-            type: 'POST',
-            data: data_send,
-            dataType: "json",
-            success: function (data) {
-                callback(data);
-            }
-        });
-    },
-
-    setChartHourlyVisitors: function (data) {
-//        console.log(data);
-
-        if (!data.connected || !data.passerby || !data.visitor) {
-            ccmn.totalChart.data.datasets[0].data = [0];
-            ccmn.totalChart.data.datasets[1].data = [0];
-            ccmn.totalChart.data.datasets[2].data = [0];
-        } else {
-            data.connected = JSON.parse(data.connected);
-            data.passerby = JSON.parse(data.passerby);
-            data.visitor = JSON.parse(data.visitor);
-
-            var connected = Object.values(data.connected);
-            var passerby = Object.values(data.passerby);
-            var visitor = Object.values(data.visitor);
-
-            ccmn.totalChart.data.datasets[0].data = connected;
-            ccmn.totalChart.data.datasets[1].data = passerby;
-            ccmn.totalChart.data.datasets[2].data = visitor;
-        }
-        ccmn.totalChart.update();
-    },
-
-    getTimeArray : function() {
-        var arr = [];
-        var item;
-
-        for(var i = 0; i < 24; i++) {
-            if (i < 10)
-                item = '0' + i + '.00';
-            else
-                item = i + '.00';
-            arr.push(item);
-        };
-        return arr;
-    },
-
-    getRandomValues: function(min, max, howMany) {
-        arr = [];
-        var value;
-
-        for (var i = 0; i < howMany; i++) {
-            value = Math.random() * (max - min) + min;
-            arr.push(Math.floor(value));
-        };
-        return arr;
-    },
-
-    getColorArray: function(color, length) {
-        arr = [];
-
-        for (var i = 0; i < length; i++)
-            arr.push(color);
-
-        return arr;
-    },
-
-};
-
 ccmn.makeApiRequest('cisco-presence.unit.ua/api/config/v1/sites', ccmn.apis[1], 'GET', ccmn.setSiteId, NaN);
 
 $(document).ready(function() {
     inAnimation = 'fadeInRightBig';
-
-    console.log(ccmn.siteId);
 
     /* DASHBOARDS ANIMATION */
     $('.panel-item').on("click", function (event) {
@@ -198,22 +47,28 @@ $(document).ready(function() {
     });
     /* date select change event END */
 
+
+    /* Hide/show custom date */
     $('#custom-date').change(function () {
         ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
         $('.total-chart-container').removeClass('hide');
         ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
     });
 
+    $('.panel-floor').click(function () {
+        ccmn.makeApiRequest('cisco-presence.unit.ua/api/presence/v1/clients', ccmn.apis[1], 'GET', ccmn.setActiveUsersList, NaN);
+
+    });
+
 
     /* DATA RELOAD LOOP */
     var timerWrap = setInterval(function() {
-        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
-        ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
-
+        ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);         // Init table in Total visitors dashboard
+        ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);       // Init chart in Total visitors dashboard
 
         var timerId = setInterval(function() {
-            ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
-            ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
+//            ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
+//            ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
 
         }, 15000);
         clearInterval(timerWrap);

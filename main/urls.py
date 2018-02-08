@@ -20,4 +20,5 @@ urlpatterns = [
     url(r'^index$', views.index, name='index'),
     url(r'^get_table_total_visitors/$', views.get_table_total_visitors, name='get_table_total_visitors'),
     url(r'^get_hourly_total_visitors/$', views.get_hourly_total_visitors, name='get_hourly_total_visitors'),
+    url(r'^get_active_users_list/$', views.get_active_users_list, name='get_active_users_list')
 ]

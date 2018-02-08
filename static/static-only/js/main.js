@@ -31,7 +31,7 @@ var ccmn = {
         var data_send = {
             'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
             'login': $('#login').val(),
-            'pass': $('#presence').val(),
+            'pass': $('#presence_pass').val(),
             'when': $('#date-selection').val(),
             'site_id': ccmn.siteId
         };
@@ -66,7 +66,7 @@ var ccmn = {
          var data_send = {
             'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
             'login': $('#login').val(),
-            'pass': $('#presence').val(),
+            'pass': $('#presence_pass').val(),
             'when': $('#date-selection').val(),
             'site_id': ccmn.siteId
         };
