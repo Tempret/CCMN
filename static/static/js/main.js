@@ -54,12 +54,50 @@ $(document).ready(function() {
         $('.total-chart-container').removeClass('hide');
         ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
     });
+    /* Hide/show custom date END*/
+
 
     $('.panel-floor').click(function () {
         ccmn.makeApiRequest('cisco-presence.unit.ua/api/presence/v1/clients', ccmn.apis[1], 'GET', ccmn.setActiveUsersList, NaN);
 
     });
 
+    $('#search-mac-field').change(function() {
+        var value = $(this).val();
+        var checker = $('.validation-checker')
+
+        if (!$(this).val()) {
+            $('#mac-addr-selection').fadeIn(200);
+        } else {
+            $('#mac-addr-selection').fadeOut(200);
+        }
+
+        if (value) {
+            checker.fadeOut(200);
+        }
+
+        var mac_template = '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$';
+
+        valid = value.match(mac_template);
+
+        if (valid != null) {
+            checker.fadeIn(200);
+            checker.removeClass('error');
+            checker.addClass('accept');
+            $(this).css('color', '#26a69a');
+        } else {
+            checker.fadeIn(200);
+            $(this).css('color', '#EF9A9A');
+            checker.removeClass('accept');
+            checker.addClass('error');
+        }
+        console.log(valid);
+    });
+
+    $('#search-mac-field').focus(function() {
+        $('.validation-checker').fadeOut(200);
+        $(this).css('color', 'black');
+    });
 
     /* DATA RELOAD LOOP */
     var timerWrap = setInterval(function() {
@@ -73,7 +111,6 @@ $(document).ready(function() {
         }, 15000);
         clearInterval(timerWrap);
     }, 500);
-
     /* data reload loop END */
 
     /* charts END*/

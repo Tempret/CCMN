@@ -1,20 +1,23 @@
 {% load staticfiles %}
 
-<!doctype html>
+<!DOCTYPE HTML>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport"
           content="width=device-width, user-scalable=no, initial-scale=1.0, maximum-scale=1.0, minimum-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>Document</title>
+    <title>CCMN-project</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-beta.3/css/bootstrap.min.css" integrity="sha384-Zug+QiDoJOrZ5t4lssLdxGhVrurbmBWopoEl+M6BdEfwnCJZtKxi1KgxUyJq13dy" crossorigin="anonymous">
-    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
+
     <link rel="stylesheet" href="{% static 'css/animate.css' %}">
+    <link rel="stylesheet" href="{% static 'css/styles.css' %}">
     <link rel="stylesheet" href="{% static 'css/font-awesome-4.7.0/css/font-awesome.min.css' %}">
     <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
     <script type="text/javascript" src="https://ajax.googleapis.com/ajax/libs/jquery/1.10.1/jquery.min.js"></script>
     <style>
+
         .floor-map::before {
             background-image: url({% static 'media/icons/dusk/floor_map.png' %});
         }
@@ -36,153 +39,44 @@
         .floor-congestion::before {
             background-image: url({% static 'media/icons/dusk/floor_congestion.png' %});
         }
-    </style>
 
+    </style>
 </head>
 <body>
     <div id="wrapper">
-        <nav>
-            <div class="container">
-                <div id="menu" class="row">
-                    <div class="col-3 d-flex justify-content-center align-items-center">
-                        <span class="project-name">CCMN project</span>
-                    </div>
-                    <div class="col-2 d-flex justify-content-center align-items-center">
-                        <!--<a class="content">Login:</a>-->
-                        <input id="login" content="Login" type="text" placeholder="Login" value="RO">
-                    </div>
-                    <div class="col-2 d-flex justify-content-center align-items-center">
-                        <!--<a class="content">Password:</a>-->
-                        <input id="presence_pass" content="password" type="password" placeholder="Presence pass" value="Passw0rd">
-                    </div>
-                    <div class="col-2 d-flex justify-content-center align-items-center">
-                        <input id="locate_pass" content="password" type="password" placeholder="Locate pass" value="just4reading">
-                    </div>
-                </div>
-            </div>
-        </nav>
+
+        {% include 'nav.html' %}
+
         <div class="container">
             <div class="row">
-                <div class="col-3 left-col">
-                    <div class="container">
-                        <div class="panel d-flex flex-column">
-                            <div class="p-2 panel-item">
-                                <span class="menu-icons total-visitors">Total visitors</span>
-                                <span class="menu-icons"></span>
-                            </div>
-                            <div class="p-2 panel-item panel-floor">
-                                <span class="menu-icons floor-map">Floor map</span>
 
-                            </div>
-                            <div class="p-2 panel-item">
-                                <span class="menu-icons analitics">Analytics</span>
+                {% include 'control_panel.html' %}
 
-                            </div>
-                            <div class="p-2 panel-item">
-                                <span class="menu-icons presence">Presence</span>
-
-                            </div>
-                            <div class="p-2 panel-item">
-                                <span class="menu-icons fcasting-vis">Forecasting</span>
-
-                            </div>
-                            <div class="p-2 panel-item">
-                                <span class="menu-icons correlation">Carrelations</span>
-
-                            </div>
-                            <div class="p-2 panel-item">
-                                <span class="menu-icons floor-congestion">Floor congestion</span>
-                            </div>
-
-                            <select name="date-option" class="date-selection" id="date-selection">
-                                <option value="today">Today</option>
-                                <option value="yesterday">Yesterday</option>
-                                <option value="3days">Last 3 days</option>
-                                <option value="lastweek">Last 7 days</option>
-                                <option value="lastmonth">This month</option>
-                                <option value="custom">Custom</option>
-                            </select>
-                            <input id="custom-date" type="date" class="date-selection hide">
-                        </div>
-                    </div>
-                </div>
                 <div class="col content">
                     <div class="container">
-                        <div class="dashboard-container d-flex flex-column">
-                            <div id="dash-total-visitors" class="p-5 dashboard-item visible">
-                                <h1>Total visitors</h1>
 
-                                <p>Daily report</p>
-                                <table class="total-visitors-table">
-                                    <thead>
-                                    <tr>
-                                        <th>Description</th>
-                                        <th>Count</th>
-                                    </tr>
-                                    </thead>
-                                    <tbody>
-                                        <tr>
-                                            <td>Connected visitors</td>
-                                            <td id="connected"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>Passersby visitors</td>
-                                            <td id="passerby"></td>
-                                        </tr>
-                                        <tr>
-                                            <td>All visitors</td>
-                                            <td id="visitors"></td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                                <div class="total-chart-container">
-                                    <p>Hourly report</p>
-                                    <canvas id="totalChart" width="300" height="200"></canvas>
-                                </div>
+                        {% include 'total_visitors.html' %}
 
-                            </div>
-                            <div id="dash-floor-map" class="p-5 dashboard-item hide">
-                                <h1>Floor map</h1>
+                        {% include 'floor_map.html' %}
 
-                                <select name="mac-addr-option" class="date-selection" id="mac-addr-selection">
+                        {% include 'analytics.html' %}
 
-                                </select>
-                                <div class="mac-search-wrapper">
-                                    <input id="search-field" type="text" value="">
-                                    <input type="button" value="Search">
-                                    <label for="search-field">Mac address:</label>
-                                </div>
+                        {% include 'presence.html' %}
 
-                            </div>
-                            <div id="dash-analytics" class="p-5 dashboard-item hide">
-                                <span>Analytics</span>
-                            </div>
-                            <div id="dash-presence" class="p-5 dashboard-item hide">
-                                <span>Presence</span>
-                            </div>
-                            <div id="dash-forecasting" class="p-5 dashboard-item hide">
-                                <span>Forecasting</span>
-                            </div>
-                            <div id="dash-carrelations" class="p-5 dashboard-item hide">
-                                <span>Carrelations</span>
-                            </div>
-                            <div id="dash-floor-congestion" class="p-5 dashboard-item hide">
-                                <span>Floor congestion</span>
-                            </div>
-                        </div>
+                        {% include 'forecasting.html' %}
+
+                        {% include 'carrelations.html' %}
+
+                        {% include 'floor_congestion.html' %}
+
                     </div>
                 </div>
             </div>
         </div>
-        <footer>
-            <div class="container">
-                <div class="row">
-                    <div class="col-1 footer-item">
-                        <span class="content">Footer</span>
-                    </div>
-                </div>
-            </div>
-        </footer>
+    </div>
+    <footer>
+        {% include 'footer.html' %}
+    </footer>
     </div>
     <form id="csrf_getting_form" class="hidden">{% csrf_token %}</form>
     <script type="text/javascript" src="{% static 'js/ccmn.js'%}"></script>

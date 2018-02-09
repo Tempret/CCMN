@@ -1,0 +1,32 @@
+<div class="dashboard-container d-flex flex-column">
+    <div id="dash-total-visitors" class="p-5 dashboard-item visible">
+        <h1>Total visitors</h1>
+        <p>Daily report</p>
+        <table class="total-visitors-table">
+            <thead>
+            <tr>
+                <th>Description</th>
+                <th>Count</th>
+            </tr>
+            </thead>
+            <tbody>
+            <tr>
+                <td>Connected visitors</td>
+                <td id="connected"></td>
+            </tr>
+            <tr>
+                <td>Passersby visitors</td>
+                <td id="passerby"></td>
+            </tr>
+            <tr>
+                <td>All visitors</td>
+                <td id="visitors"></td>
+            </tr>
+            </tbody>
+        </table>
+        <div class="total-chart-container">
+            <p>Hourly report</p>
+            <canvas id="totalChart" width="300" height="200"></canvas>
+        </div>
+    </div>
+</div>

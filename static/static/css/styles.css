@@ -6,6 +6,19 @@ html, body {
     font-family: 'Roboto', sans-serif;
 }
 
+nav {
+    display: flex;
+    align-items: center;
+    height: 80px;
+    background-color: #26a69a;   /* Teal (400) */
+    position: fixed;
+    top: 0;
+    color: #FFFFFF;
+    width: 100%;
+    z-index: 10;
+    box-shadow: 0 0 10px rgba(0,0,0,0.5);
+}
+
 input {
     width: 150px;
     padding: 0 10px 0 10px;
@@ -26,6 +39,7 @@ table, th, td {
 
 thead {
     border-bottom: 1px solid #d0d0d0;
+    text-align: left;
 }
 
 tr {
@@ -71,18 +85,7 @@ span:hover {
     top: 80px;
 }
 
-nav {
-    height: 80px;
-    background-color: #26a69a;   /* Teal (400) */
-    position: fixed;
-    top: 0;
-    color: #FFFFFF;
-    width: 100%;
-    z-index: 10;
-    box-shadow: 0 0 10px rgba(0,0,0,0.5);
-    display: flex;
-    align-items: center;
-}
+
 
 .nav-item .content {
     color: white;
@@ -147,10 +150,6 @@ footer {
     min-height: 700px;
 }
 
-.dashboard-item:last-child {
-    margin-bottom: 30px;
-}
-
 .footer-item {
     height: 40px;
     display: flex;
@@ -213,46 +212,72 @@ footer {
 }
 
 .mac-search-wrapper {
-    margin-top: 15px;
+    margin-top: 40px;
+    position: relative;
     display: flex;
     justify-content: space-between;
 }
 
 input[type=text] {
-
     width: 100%;
     margin-right: 15px;
     border: none;
-    border-bottom: 1px solid gray;
+    border-bottom: 1px solid #17a2b8;
+}
+
+input[type=text]:focus {
+    outline: none;
+
 }
 
 label {
     display: inline-block;
     margin-bottom: .5rem;
     position: absolute;
-    transition: transform .2s ease-out, -webkit-transform .2s
+    left: 10px;
+    -webkit-transition: transform 0.2s, color 0.2s; /* Safari */
+    transition: transform 0.2s, color 0.2s;
 }
 
-label:after {
-    content: '';
+input[type=text]:focus ~ label,
+input[type=text]:valid ~ label {
+    color: blue;
+    font-size:14px;
+    color: #17a2b8;
+    transform: translate(-5px, -20px)
+}
+
+#map {
+    margin-top: 40px;
+    border: 1px dotted #17a2b8;
+    width: 100%;
+    min-height: 100px;
+}
+
+.btn-info {
+    box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
+}
+
+#mac-addr-selection {
+    background-color: #17a2b8;
+}
+
+.validation-checker {
     position: absolute;
-    top: 0;
-    left: 0;
+    left: 565px;
+    top: 7px;
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    background-repeat: none;
+    background-position:center;
 }
 
-input:focus ~ label,
-input:valid ~ label {
-  top:-20px;
-  font-size:14px;
-  color:#5264AE;
+.validation-checker.accept {
+    background-image: url(../media/icons/accept.png);
+
 }
 
-input[type=text]:focus {
-  box-sizing: inherit;
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  outline: none;
-  appearance: none;
+.validation-checker.error {
+    background-image: url(../media/icons/error.png);
 }
-
