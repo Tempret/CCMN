@@ -31,7 +31,7 @@ $(document).ready(function() {
 
         if (value == 'custom')                          /*  Hide custom datepicker if custom select is active */
             $('#custom-date').removeClass('hide');      /* | */
-        else                                            /* | */
+        else                                            /* V */
             $('#custom-date').addClass('hide');         /*---*/
 
         if (value != 'custom') {
