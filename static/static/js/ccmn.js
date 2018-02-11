@@ -137,11 +137,53 @@ var ccmn = {
         target = $('#mac-addr-selection');
         mac_list = [];
         for (var i = 0; i < data.length; i++) {
-            $(target).append('<option value="mac' + i + '">' + data[i].macAddress + '</option>');
+            $(target).append('<option value="' + data[i].macAddress + '">' + data[i].macAddress + '</option>');
             mac_list.push(data[i].macAddress);
         }
 
         console.log(mac_list);
+    },
+
+    getImageAndCoords: function(mac, callback) {
+        var data_send = {
+            'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
+            'login': $('#login').val(),
+            'pass': $('#locate_pass').val(),
+            'mac': mac
+        };
+
+        $.ajax({
+            url: 'get_map_and_coords/',
+            type: 'POST',
+            data: data_send,
+            dataType: "json",
+            success: function (data) {
+                callback(data);
+            }
+        });
+    },
+
+    setMapAndCoords(data) {
+        console.log(data);
+
+        if (data.err == 'Unknown mac address') {
+            $('#map').css('background-image', 'url(static/media/no_data.png)');
+        } else {
+            $('#floor-number').text(data.floorNumber);
+
+            $('#map').css('background-image', 'url(' + data.mapSrc + ')');
+        }
+
+        var left = data.mapCoordinate.x * $('#map').outerWidth() / data.mapInfo.floorDimension.width;
+        var top = data.mapCoordinate.y * $('#map').outerHeight() / data.mapInfo.floorDimension.length;
+
+        console.log(left + '    ' + top);
+
+        $('#map-point').css({
+            top: top + 'px',
+            left: left + 'px'
+        })
+
     },
 
     getTimeArray : function() {

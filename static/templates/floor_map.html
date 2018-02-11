@@ -1,3 +1,5 @@
+{% load staticfiles %}
+
 <div id="dash-floor-map" class="p-5 dashboard-item hide">
     <h1>Floor map</h1>
 
@@ -7,11 +9,12 @@
     <div class="mac-search-wrapper">
         <input class='mac-input' id="search-mac-field" type="text" value="" required>
         <div class="validation-checker"></div>
-        <button type="button" class="btn btn-info">Search</button>
+        <button type="button" class="btn btn-info" id="mac-search-button">Search</button>
         <label for="search-mac-field">Mac address</label>
     </div>
-
+    <p id="floor-number"></p>
     <div id="map">
+        <div id="map-point"></div>
 
     </div>
 </div>

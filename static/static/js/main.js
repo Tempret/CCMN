@@ -87,17 +87,44 @@ $(document).ready(function() {
             $(this).css('color', '#26a69a');
         } else {
             checker.fadeIn(200);
-            $(this).css('color', '#EF9A9A');
             checker.removeClass('accept');
             checker.addClass('error');
+            $(this).css('color', '#EF9A9A');
         }
-        console.log(valid);
+//        console.log(valid);
     });
 
     $('#search-mac-field').focus(function() {
         $('.validation-checker').fadeOut(200);
         $(this).css('color', 'black');
     });
+
+    $('#mac-search-button').click(function() {
+        var mac_template = '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$';
+        var value = $('#search-mac-field').val();
+
+        valid = value.match(mac_template);
+
+//        console.log('Valid');
+//        console.log(valid);
+
+        if (valid != null || !value.length) {
+            if (!value.length) {
+                mac = $('#mac-addr-selection').val();
+            } else {
+                mac = value;
+            }
+
+            ccmn.getImageAndCoords(mac, ccmn.setMapAndCoords);
+            console.log('Serching');
+            console.log(mac);
+        } else {
+            console.log('Error');
+            console.log(value);
+        }
+
+    });
+
 
     /* DATA RELOAD LOOP */
     var timerWrap = setInterval(function() {

@@ -31,7 +31,7 @@ $(document).ready(function() {
 
         if (value == 'custom')                          /*  Hide custom datepicker if custom select is active */
             $('#custom-date').removeClass('hide');      /* | */
-        else                                            /* | */
+        else                                            /* V */
             $('#custom-date').addClass('hide');         /*---*/
 
         if (value != 'custom') {
@@ -64,32 +64,65 @@ $(document).ready(function() {
 
     $('#search-mac-field').change(function() {
         var value = $(this).val();
+        var checker = $('.validation-checker')
 
         if (!$(this).val()) {
-            $('#mac-addr-selection').show(500);
+            $('#mac-addr-selection').fadeIn(200);
         } else {
-            $('#mac-addr-selection').hide(500);
+            $('#mac-addr-selection').fadeOut(200);
         }
 
-        if (value)
-            $(this).css('color', 'black');
+        if (value) {
+            checker.fadeOut(200);
+        }
 
         var mac_template = '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$';
 
         valid = value.match(mac_template);
 
         if (valid != null) {
-            $(this).css('color', 'green');
+            checker.fadeIn(200);
+            checker.removeClass('error');
+            checker.addClass('accept');
+            $(this).css('color', '#26a69a');
         } else {
-            $(this).css('color', 'red');
+            checker.fadeIn(200);
+            checker.removeClass('accept');
+            checker.addClass('error');
+            $(this).css('color', '#EF9A9A');
         }
-
-        console.log('Check');
-        console.log(valid);
+//        console.log(valid);
     });
 
     $('#search-mac-field').focus(function() {
+        $('.validation-checker').fadeOut(200);
         $(this).css('color', 'black');
+    });
+
+    $('#mac-search-button').click(function() {
+        var mac_template = '^([0-9A-Fa-f]{2}[:-]){5}([0-9A-Fa-f]{2})$';
+        var value = $('#search-mac-field').val();
+
+        valid = value.match(mac_template);
+
+//        console.log('Valid');
+//        console.log(valid);
+
+        if (valid != null || !value.length) {
+            if (!value.length) {
+                mac = $('#mac-addr-selection').val();
+            } else {
+                mac = value;
+            }
+
+            ccmn.getImageAndCoords(mac, ccmn.setMapAndCoords);
+            console.log('Serching');
+            console.log(mac);
+        } else {
+            console.log('Error');
+            console.log(value);
+        }
+
     });
 
 

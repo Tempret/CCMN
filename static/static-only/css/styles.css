@@ -9,9 +9,7 @@ html, body {
 nav {
     display: flex;
     align-items: center;
-    height: 80px;
     background-color: #26a69a;   /* Teal (400) */
-    position: fixed;
     top: 0;
     color: #FFFFFF;
     width: 100%;
@@ -64,8 +62,6 @@ tbody {
 
 /* Table styles  END */
 
-
-
 a:hover {
     text-decoration: none;
 }
@@ -80,12 +76,8 @@ span:hover {
 }
 
 #wrapper {
-    min-height: 100%;
-    position: relative;
-    top: 80px;
+
 }
-
-
 
 .nav-item .content {
     color: white;
@@ -247,12 +239,7 @@ input[type=text]:valid ~ label {
     transform: translate(-5px, -20px)
 }
 
-#map {
-    margin-top: 40px;
-    border: 1px dotted #17a2b8;
-    width: 100%;
-    min-height: 100px;
-}
+
 
 .btn-info {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
@@ -265,17 +252,31 @@ input[type=text]:valid ~ label {
 .validation-checker {
     position: absolute;
     left: 565px;
-    top: 3px;
-    border-radius: 15px;
-    width: 30px;
-    height: 30px;
-    border: 1px solid black;
+    top: 7px;
+    border-radius: 10px;
+    width: 20px;
+    height: 20px;
+    background-repeat: none;
+    background-position:center;
 }
 
-.validation-checker .accept {
-    background-image: url(../media/icons/dusk/accept.png);
+.validation-checker.accept {
+    background-image: url(../media/icons/accept.png);
+
 }
 
-.validation-checker .error {
-    background-image: url(../media/icons/dusk/accept.png);
+.validation-checker.error {
+    background-image: url(../media/icons/error.png);
 }
+
+#map {
+    margin-top: 40px;
+    border: 1px dotted #17a2b8;
+    max-width: 100%;
+    min-height: 100px;
+    overflow: hidden;
+    background-image: url(../media/no_image.jpg);
+}
+
+#map {
+

@@ -6,6 +6,10 @@ html, body {
     font-family: 'Roboto', sans-serif;
 }
 
+p {
+    text-align: left;
+}
+
 nav {
     display: flex;
     align-items: center;
@@ -62,8 +66,6 @@ tbody {
 
 /* Table styles  END */
 
-
-
 a:hover {
     text-decoration: none;
 }
@@ -89,6 +91,7 @@ footer {
     height: 40px;
     background-color: #26a69a;
     position: absolute;
+    bottom: 0;
     width: 100%;
 }
 
@@ -205,7 +208,7 @@ footer {
 }
 
 .mac-search-wrapper {
-    margin-top: 40px;
+    margin: 40px 0;
     position: relative;
     display: flex;
     justify-content: space-between;
@@ -240,12 +243,7 @@ input[type=text]:valid ~ label {
     transform: translate(-5px, -20px)
 }
 
-#map {
-    margin-top: 40px;
-    border: 1px dotted #17a2b8;
-    width: 100%;
-    min-height: 100px;
-}
+
 
 .btn-info {
     box-shadow: 0 1px 3px rgba(0,0,0,0.12), 0 1px 2px rgba(0,0,0,0.24);
@@ -273,4 +271,25 @@ input[type=text]:valid ~ label {
 
 .validation-checker.error {
     background-image: url(../media/icons/error.png);
+}
+
+#map {
+    max-width: 100%;
+    min-height: 355px;
+    overflow: hidden;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    position: relative;
+}
+
+#map-point {
+    height: 10px;
+    width: 10px;
+    background-color: red;
+    border: 2px solid green;
+    border-radius: 5px;
+    position: absolute;
+    top: 0;
+    left: 0;
 }
