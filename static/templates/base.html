@@ -74,13 +74,14 @@
             </div>
         </div>
     </div>
-    <footer>
-        {% include 'footer.html' %}
-    </footer>
-    </div>
+    <!--<footer>-->
+        <!--{% include 'footer.html' %}-->
+    <!--</footer>-->
     <form id="csrf_getting_form" class="hidden">{% csrf_token %}</form>
     <script type="text/javascript" src="{% static 'js/ccmn.js'%}"></script>
     <script type="text/javascript" src="{% static 'js/main.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/floor_map.js'%}"></script>
+    <script type="text/javascript" src="{% static 'js/ccmn_charts.js'%}"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.5.0/Chart.min.js"></script>
 </body>
 </html>

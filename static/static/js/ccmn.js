@@ -3,7 +3,7 @@ var ccmn = {
     apis : ['locate_pass', 'presence_pass'],
 
     setSiteId : function (data) {
-        console.log('Data: ', data)
+        console.log('Data: ', data);
         ccmn.siteId = data[0].aesUId;
         console.log("Site id:", data[0].aesUId);
     },
@@ -41,8 +41,6 @@ var ccmn = {
             data_send.date = $('#custom-date').val();
         }
 
-//        console.log(data_send);
-
         $.ajax({
             url: 'get_table_total_visitors/',
             type: 'POST',
@@ -55,9 +53,6 @@ var ccmn = {
     },
 
     setTableTotalVisitors: function (data) {
-
-//        console.log(data);
-
         $('#connected').text(data.connected);
         $('#passerby').text(data.passerby);
         $('#visitors').text(data.visitor);
@@ -76,8 +71,6 @@ var ccmn = {
             data_send.date = $('#custom-date').val();
         }
 
-//        console.log(data_send);
-
         $.ajax({
             url: 'get_hourly_total_visitors/',
             type: 'POST',
@@ -90,8 +83,6 @@ var ccmn = {
     },
 
     setChartHourlyVisitors: function (data) {
-//        console.log(data);
-
         if (!data.connected || !data.passerby || !data.visitor) {
             ccmn.totalChart.data.datasets[0].data = [0];
             ccmn.totalChart.data.datasets[1].data = [0];
@@ -131,17 +122,15 @@ var ccmn = {
     },
 
     setActiveUsersList(data) {
-        console.log(data);
+        data = JSON.parse(data);
 
         $('#mac-addr-selection option').remove();
         target = $('#mac-addr-selection');
         mac_list = [];
         for (var i = 0; i < data.length; i++) {
-            $(target).append('<option value="' + data[i].macAddress + '">' + data[i].macAddress + '</option>');
-            mac_list.push(data[i].macAddress);
+            $(target).append('<option value="' + data[i] + '">' + data[i] + '</option>');
+            mac_list.push(data[i]);
         }
-
-        console.log(mac_list);
     },
 
     getImageAndCoords: function(mac, callback) {
@@ -164,26 +153,65 @@ var ccmn = {
     },
 
     setMapAndCoords(data) {
-        console.log(data);
-
         if (data.err == 'Unknown mac address') {
             $('#map').css('background-image', 'url(static/media/no_data.png)');
+            $('#map-point').hide();
+            $('#mac-user-list').hide();
+
         } else {
+
             $('#floor-number').text(data.floorNumber);
 
             $('#map').css('background-image', 'url(' + data.mapSrc + ')');
+
+            var left = data.mapCoordinate.x * $('#map').outerWidth() / data.mapInfo.floorDimension.width;
+            var top = data.mapCoordinate.y * $('#map').outerHeight() / data.mapInfo.floorDimension.length;
+
+            $('#map-point').css({
+                top: top + 'px',
+                left: left + 'px',
+            })
+
+            manufacturer = data.manufacturer ? data.manufacturer : '-';
+
+            $('#manufacturer span').text(manufacturer);
+            $('#rssi span').text(data.statistics.maxDetectedRssi.rssi);
+
+            $('#time-first span').text(new Date(data.statistics.firstLocatedTime).toLocaleTimeString());
+            $('#time-last span').text(new Date(data.statistics.lastLocatedTime).toLocaleTimeString());
+
+            $('#map-point').show();
+            $('#mac-user-list').show();
+        }
+    },
+
+    getDwellAndRepeatData: function(callback) {
+        var data_send = {
+            'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
+            'login': $('#login').val(),
+            'pass': $('#presence_pass').val(),
+            'timerange': $('#date-selection').val(),
+            'site_id': ccmn.siteId
+        };
+
+        if ($('#date-selection').val() == 'custom') {
+            data_send.date = $('#custom-date').val();
         }
 
-        var left = data.mapCoordinate.x * $('#map').outerWidth() / data.mapInfo.floorDimension.width;
-        var top = data.mapCoordinate.y * $('#map').outerHeight() / data.mapInfo.floorDimension.length;
+        $.ajax({
+            url: 'get_dwell_and_repeat_data/',
+            type: 'POST',
+            data: data_send,
+            dataType: "json",
+            success: function (data) {
+                callback(data);
+            }
+        });
+    },
 
-        console.log(left + '    ' + top);
-
-        $('#map-point').css({
-            top: top + 'px',
-            left: left + 'px'
-        })
-
+    setDvellChart: function(data) {
+        console.log('Dwell');
+        console.log(data);
     },
 
     getTimeArray : function() {

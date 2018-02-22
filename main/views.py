@@ -3,6 +3,7 @@ from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from requests import get, post, Timeout, ConnectionError
 from requests.auth import HTTPBasicAuth
 from base64 import b64encode
+import os
 
 def index(request):
 	return render(request, 'base.html', locals())
@@ -107,7 +108,9 @@ def get_active_users_list(request):
 
 		auth = HTTPBasicAuth(login, password)
 
-		url = 'https://cisco-cmx.unit.ua/api/location/v2/clients'
+		# url = 'https://cisco-cmx.unit.ua/api/location/v2/clients'
+		# / api / location / v2 / clients / active
+		url = 'https://cisco-cmx.unit.ua/api/location/v2/clients/active'
 
 		try:
 			response = get(url, auth=auth, verify=False, timeout=1)
@@ -175,7 +178,9 @@ def get_map_and_coords(request):
 					elif floor == '3rd_floor':
 						data['floorNumber'] = 'Third floor'
 
-					with open('./static/static/media/floors/'+ floor + '.jpg', 'wb') as f:
+					path = os.path.dirname(os.path.realpath(__file__))
+
+					with open(path + '/../static/static/media/floors/'+ floor + '.jpg', 'wb') as f:
 						for elem in response.iter_content(1024):
 							f.write(elem)
 
@@ -184,5 +189,65 @@ def get_map_and_coords(request):
 				return JsonResponse(data, safe=False)
 			else:
 				return JsonResponse({'err': 'Unknown mac address'}, safe=False)
+	else:
+		return JsonResponse({'err': 'Method should be POST'}, safe=False)
+
+
+def get_dwell_and_repeat_data(request):
+	if request.method == 'POST':
+
+		when = request.POST['timerange']
+		login = request.POST['login']
+		password = request.POST['pass']
+		siteid = request.POST['site_id']
+
+		auth = HTTPBasicAuth(login, password)
+
+		print('HELLO i AM HERE', when)
+
+		if when == 'today' or when == 'yesterday' or when == '3days' or when == 'custom':
+			if when == 'custom':
+				when = ''
+			granularity = 'hourly'
+		elif when == 'lastweek' or when == 'lastmonth':
+			granularity = 'daily'
+		else:
+			granularity = ''
+
+		dwell_url = 'https://cisco-presence.unit.ua/api/presence/v1/dwell/' + granularity + '/' + when
+		repeat_url = 'https://cisco-presence.unit.ua/api/presence/v1/repeatvisitors/' + granularity + '/' + when
+
+		r_args = {
+			'siteId': siteid,
+		}
+
+		if when == '':
+			r_args['date'] = request.POST['date']
+			dwell_url = 'https://cisco-presence.unit.ua/api/presence/v1/dwell/hourly'
+			repeat_url = 'https://cisco-presence.unit.ua/api/presence/v1/repeatvisitors/hourly'
+
+		print('HELLO i AM HERE', r_args, dwell_url, repeat_url)
+
+		try:
+			dwell_response = get(dwell_url, auth=auth, params=r_args, verify=False, timeout=1, stream=True)
+			repeat_response = get(repeat_url, auth=auth, params=r_args, verify=False, timeout=1, stream=True)
+
+		except (Timeout, ConnectionError) as err:
+			print(err)
+			return JsonResponse({'err': err}, safe=False)
+
+		else:
+			response_data = {}
+
+			print(dwell_response.text)
+			print(repeat_response.text)
+
+			response_data['dwell'] = dwell_response.json()
+			response_data['repeat'] = repeat_response.json()
+
+
+
+			return JsonResponse(response_data, safe=False)
+
 	else:
 		return JsonResponse({'err': 'Method should be POST'}, safe=False)
