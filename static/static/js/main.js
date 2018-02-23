@@ -65,6 +65,7 @@ $(document).ready(function() {
         ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);       // Init chart in Total visitors dashboard
 
         ccmn.getDwellAndRepeatData(ccmn.setDvellChart);
+        ccmn.getManufacturers(ccmn.setManufacturers);
 
         var timerId = setInterval(function() {
 //            ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);

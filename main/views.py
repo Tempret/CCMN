@@ -4,6 +4,7 @@ from requests import get, post, Timeout, ConnectionError
 from requests.auth import HTTPBasicAuth
 from base64 import b64encode
 import os
+import collections
 
 def index(request):
 	return render(request, 'base.html', locals())
@@ -203,8 +204,6 @@ def get_dwell_and_repeat_data(request):
 
 		auth = HTTPBasicAuth(login, password)
 
-		print('HELLO i AM HERE', when)
-
 		if when == 'today' or when == 'yesterday' or when == '3days' or when == 'custom':
 			if when == 'custom':
 				when = ''
@@ -226,7 +225,7 @@ def get_dwell_and_repeat_data(request):
 			dwell_url = 'https://cisco-presence.unit.ua/api/presence/v1/dwell/hourly'
 			repeat_url = 'https://cisco-presence.unit.ua/api/presence/v1/repeatvisitors/hourly'
 
-		print('HELLO i AM HERE', r_args, dwell_url, repeat_url)
+		# print('HELLO i AM HERE', r_args, dwell_url, repeat_url)
 
 		try:
 			dwell_response = get(dwell_url, auth=auth, params=r_args, verify=False, timeout=1, stream=True)
@@ -237,17 +236,52 @@ def get_dwell_and_repeat_data(request):
 			return JsonResponse({'err': err}, safe=False)
 
 		else:
-			response_data = {}
 
-			print(dwell_response.text)
-			print(repeat_response.text)
+			if not dwell_response.text or not repeat_response.text:
+				return JsonResponse({'err': 'Empty data'}, safe=False)
+
+			response_data = {}
 
 			response_data['dwell'] = dwell_response.json()
 			response_data['repeat'] = repeat_response.json()
-
-
 
 			return JsonResponse(response_data, safe=False)
 
 	else:
 		return JsonResponse({'err': 'Method should be POST'}, safe=False)
+
+def get_manufacturers(request):
+	if request.method == 'POST':
+		login = request.POST['login']
+		password = request.POST['pass']
+		siteid = request.POST['site_id']
+
+		auth = HTTPBasicAuth(login, password)
+
+		url = 'https://cisco-cmx.unit.ua/api/location/v2/clients'
+
+		try:
+			response = get(url, auth=auth, verify=False, timeout=1)
+
+		except (Timeout, ConnectionError) as err:
+			print(err)
+			return JsonResponse({'err': err}, safe=False)
+
+		else:
+
+			data = response.json()
+
+			manufacturers = []
+
+			for elem in data:
+				manufacturers.append(elem['manufacturer'])
+
+			response = collections.Counter(manufacturers)
+
+			print(response.keys())
+
+			if None in response:
+				response['Undefined'] = response[None]
+				del response[None]
+
+			return JsonResponse(response, safe=False)

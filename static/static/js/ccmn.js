@@ -3,9 +3,9 @@ var ccmn = {
     apis : ['locate_pass', 'presence_pass'],
 
     setSiteId : function (data) {
-        console.log('Data: ', data);
+//        console.log('Data: ', data);
         ccmn.siteId = data[0].aesUId;
-        console.log("Site id:", data[0].aesUId);
+//        console.log("Site id:", data[0].aesUId);
     },
 
     makeApiRequest : function (url, api, type, callback, args) {
@@ -210,21 +210,202 @@ var ccmn = {
     },
 
     setDvellChart: function(data) {
-        console.log('Dwell');
-        console.log(data);
+        var data_keys = Object.keys(data);
+        var mode = $('#date-selection').val();
+        var options_dwell = {
+            'FIVE_TO_THIRTY_MINUTES': {
+                label: '5-30 mins',
+                color: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255,99,132,1)'
+            },
+            'THIRTY_TO_SIXTY_MINUTES': {
+                label: '30-60 mins',
+                color: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)'
+            },
+            'ONE_TO_FIVE_HOURS': {
+                label: '1-5 hours',
+                color: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)'
+            },
+            'FIVE_TO_EIGHT_HOURS': {
+                label: '5-7 hours',
+                color: 'rgba(38, 198, 218, 0.2)',
+                borderColor: 'rgba(38, 198, 218, 1)'
+            },
+            'EIGHT_PLUS_HOURS': {
+                label: '8+ hours',
+                color: 'rgba(141, 110, 99, 0.2)',
+                borderColor: 'rgba(141, 110, 99, 1)'
+            }
+        }
+
+        var options_repeat = {
+            'DAILY': {
+                label: 'Daily',
+                color: 'rgba(255, 99, 132, 0.2)',
+                borderColor: 'rgba(255,99,132,1)'
+            },
+            'WEEKLY': {
+                label: 'Weekly',
+                color: 'rgba(54, 162, 235, 0.2)',
+                borderColor: 'rgba(54, 162, 235, 1)'
+            },
+            'OCCASIONAL': {
+                label: 'Occasional',
+                color: 'rgba(255, 206, 86, 0.2)',
+                borderColor: 'rgba(255, 206, 86, 1)'
+            },
+            'FIRST_TIME': {
+                label: 'First time',
+                color: 'rgba(38, 198, 218, 0.2)',
+                borderColor: 'rgba(38, 198, 218, 1)'
+            },
+            'YESTERDAY': {
+                label: 'Yesterday',
+                color: 'rgba(141, 110, 99, 0.2)',
+                borderColor: 'rgba(141, 110, 99, 1)'
+            }
+        }
+
+        if (data_keys.indexOf('err') != -1)
+            console.log('Error: ' + data['err']);
+        else {
+            switch (mode) {
+                case 'today':
+                case 'yesterday':
+                case 'custom':
+
+                    // Dwell data part
+
+                    chart_data_dwell = {
+                        labels: ccmn.getTimeArray(Object.keys(data.dwell).length),
+                        datasets: make_datasets(options_dwell, data.dwell),
+                    }
+                    // Repeat data part
+
+                    chart_data_repeat = {
+                        labels: ccmn.getTimeArray(Object.keys(data.repeat).length),
+                        datasets: make_datasets(options_repeat, data.repeat),
+                    }
+                    break;
+
+                case '3days':
+
+                    dwell = [];
+                    repeat = [];
+
+                    for (day in data.dwell)
+                        for (index in data.dwell[day])
+                            dwell.push(data.dwell[day][index])
+
+                    for (day in data.repeat)
+                        for (index in data.repeat[day])
+                            repeat.push(data.repeat[day][index])
+
+                    // Dwell data part
+
+                    chart_data_dwell = {
+                        labels: ccmn.getTimeArray(data.dwell),
+                        datasets: make_datasets(options_dwell, dwell),
+                    }
+
+                    // Repeat data part
+
+                    chart_data_repeat = {
+                        labels: ccmn.getTimeArray(data.repeat),
+                        datasets: make_datasets(options_repeat, repeat),
+                    }
+                    break;
+
+                case 'lastweek':
+                case 'lastmonth':
+
+                    // Dwell data part
+
+                    chart_data_dwell = {
+                        labels: Object.keys(data.dwell),
+                        datasets: make_datasets(options_dwell, data.dwell),
+                    }
+
+                    // Repeat data part
+
+                    chart_data_repeat = {
+                        labels: Object.keys(data.repeat),
+                        datasets: make_datasets(options_repeat, data.repeat),
+                    }
+                    break;
+            }
+
+            ccmn.dwellChart.data.datasets = chart_data_dwell.datasets
+            ccmn.dwellChart.data.labels = chart_data_dwell.labels
+            ccmn.repeatChart.data.datasets = chart_data_repeat.datasets
+            ccmn.repeatChart.data.labels = chart_data_repeat.labels
+            ccmn.dwellChart.update();
+            ccmn.repeatChart.update();
+
+        }
     },
 
-    getTimeArray : function() {
+    getManufacturers: function(callback) {
+        var data_send = {
+            'csrfmiddlewaretoken': $('#csrf_getting_form [name="csrfmiddlewaretoken"]').val(),
+            'login': $('#login').val(),
+            'pass': $('#locate_pass').val(),
+            'site_id': ccmn.siteId
+        };
+
+        $.ajax({
+            url: 'get_manufacturers/',
+            type: 'POST',
+            data: data_send,
+            dataType: "json",
+            success: function (data) {
+                callback(data);
+            }
+        });
+    },
+
+    setManufacturers: function(data) {
+        console.log(data);
+
+        chart_data = {
+            labels: ['one', 'two'],
+            datasets: [[342,34234,344],[23,43,43]],
+        }
+
+        ccmn.manufactChart.data.datasets = chart_data.datasets;
+        ccmn.manufactChart.data.labels = chart_data.labels;
+        ccmn.manufactChart.update();
+        console.log(ccmn.manufactChart);
+    },
+
+    getTimeArray : function(range) {
         var arr = [];
         var item;
 
-        for(var i = 0; i < 24; i++) {
-            if (i < 10)
-                item = '0' + i + '.00';
-            else
-                item = i + '.00';
-            arr.push(item);
-        };
+        if (typeof(range) == typeof(42)) {
+            for(var i = 0; i < range; i++) {
+                if (i < 10)
+                    item = '0' + i + '.00';
+                else
+                    item = i + '.00';
+                arr.push(item);
+            };
+        } else if (typeof(range) == typeof({})) {
+            keys = Object.keys(range);
+
+            for (key in keys) {
+                console.log();
+                for(var i = 0; i < Object.keys(range[keys[key]]).length; i++) {
+                    if (i < 10)
+                        item = keys[key] + ' 0' + i + '.00';
+                    else
+                        item = keys[key] + ' ' + i + '.00';
+                    arr.push(item);
+                };
+            }
+        }
         return arr;
     },
 
@@ -248,4 +429,24 @@ var ccmn = {
         return arr;
     },
 
+};
+
+function make_datasets(options, data, dataset_options) {
+    datasets = [];
+
+    for (label in options) {
+
+        dataset = {
+            data: [],
+            label: options[label]['label'],
+            backgroundColor: options[label]['color'],
+            borderColor: options[label]['borderColor'],
+            borderWidth: 1,
+        };
+
+        for (index in data)
+            dataset.data.push(data[index][label]);
+        datasets.push(dataset);
+    }
+    return datasets;
 };

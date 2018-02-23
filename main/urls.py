@@ -23,4 +23,5 @@ urlpatterns = [
     url(r'^get_active_users_list/$', views.get_active_users_list, name='get_active_users_list'),
     url(r'^get_map_and_coords/$', views.get_map_and_coords, name='get_map_and_coords'),
     url(r'^get_dwell_and_repeat_data/$', views.get_dwell_and_repeat_data, name='get_dwell_and_repeat_data'),
+    url(r'^get_manufacturers/$', views.get_manufacturers, name='get_manufacturers'),
 ]
