@@ -37,13 +37,15 @@ $(document).ready(function() {
         if (value != 'custom') {
             ccmn.getTableTotalVisitors(ccmn.setTableTotalVisitors);
             ccmn.getDwellAndRepeatData(ccmn.setDvellChart);
-            if (value == '3days' || value == 'lastweek' || value == 'lastmonth') {
-                $('.total-chart-container').addClass('hide');
-//                console.log(value);
-            } else {
-                $('.total-chart-container').removeClass('hide');
-                ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
-            }
+            ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
+
+
+//            if (value == '3days' || value == 'lastweek' || value == 'lastmonth') {
+//                $('.total-chart-container').addClass('hide');
+//            } else {
+//                $('.total-chart-container').removeClass('hide');
+//                ccmn.getHourlyTotalVisitors(ccmn.setChartHourlyVisitors);
+//            }
         };
     });
     /* date select change event END */

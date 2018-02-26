@@ -5,6 +5,7 @@ from requests.auth import HTTPBasicAuth
 from base64 import b64encode
 import os
 import collections
+from collections import OrderedDict
 
 def index(request):
 	return render(request, 'base.html', locals())
@@ -24,9 +25,6 @@ def get_table_total_visitors(request):
 		if when == 'custom':
 			args['date'] = request.POST['date']
 			when = ''
-
-
-		print(when, login, password, siteid)
 
 		url1 = 'https://cisco-presence.unit.ua/api/presence/v1/connected/count/' + when
 		url2 = 'https://cisco-presence.unit.ua/api/presence/v1/passerby/count/' + when
@@ -68,15 +66,26 @@ def get_hourly_total_visitors(request):
 			'siteId': siteid,
 		}
 
-		if when == 'custom':
+		if when == 'today' or when == 'yesterday' or when == '3days' or when == 'custom':
+			if when == 'custom':
+				when = ''
+			granularity = 'hourly'
+		elif when == 'lastweek' or when == 'lastmonth':
+			granularity = 'daily'
+		else:
+			granularity = ''
+
+		url1 = 'https://cisco-presence.unit.ua/api/presence/v1/connected/' + granularity + '/' + when
+		url2 = 'https://cisco-presence.unit.ua/api/presence/v1/passerby/' + granularity + '/' + when
+		url3 = 'https://cisco-presence.unit.ua/api/presence/v1/visitor/' + granularity + '/' + when
+
+		print(when, login, password, siteid, url1)
+
+		if when == '':
 			args['date'] = request.POST['date']
-			when = ''
-
-		print(when, login, password, siteid)
-
-		url1 = 'https://cisco-presence.unit.ua/api/presence/v1/connected/hourly/' + when
-		url2 = 'https://cisco-presence.unit.ua/api/presence/v1/passerby/hourly/' + when
-		url3 = 'https://cisco-presence.unit.ua/api/presence/v1/visitor/hourly/' + when
+			url1 = 'https://cisco-presence.unit.ua/api/presence/v1/connected/hourly'
+			url2 = 'https://cisco-presence.unit.ua/api/presence/v1/passerby/hourly'
+			url3 = 'https://cisco-presence.unit.ua/api/presence/v1/visitor/hourly'
 
 		auth = HTTPBasicAuth(login, password)
 
@@ -109,8 +118,6 @@ def get_active_users_list(request):
 
 		auth = HTTPBasicAuth(login, password)
 
-		# url = 'https://cisco-cmx.unit.ua/api/location/v2/clients'
-		# / api / location / v2 / clients / active
 		url = 'https://cisco-cmx.unit.ua/api/location/v2/clients/active'
 
 		try:
@@ -271,17 +278,14 @@ def get_manufacturers(request):
 
 			data = response.json()
 
-			manufacturers = []
+			manufacturers = [elem['manufacturer'] for elem in data]
 
 			for elem in data:
 				manufacturers.append(elem['manufacturer'])
 
 			response = collections.Counter(manufacturers)
 
-			print(response.keys())
-
 			if None in response:
-				response['Undefined'] = response[None]
 				del response[None]
 
-			return JsonResponse(response, safe=False)
+			return JsonResponse(response.most_common(10), safe=False)

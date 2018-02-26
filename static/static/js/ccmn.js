@@ -83,6 +83,7 @@ var ccmn = {
     },
 
     setChartHourlyVisitors: function (data) {
+
         if (!data.connected || !data.passerby || !data.visitor) {
             ccmn.totalChart.data.datasets[0].data = [0];
             ccmn.totalChart.data.datasets[1].data = [0];
@@ -96,9 +97,68 @@ var ccmn = {
             var passerby = Object.values(data.passerby);
             var visitor = Object.values(data.visitor);
 
-            ccmn.totalChart.data.datasets[0].data = connected;
-            ccmn.totalChart.data.datasets[1].data = passerby;
-            ccmn.totalChart.data.datasets[2].data = visitor;
+            var mode = $('#date-selection').val();
+
+            switch (mode) {
+
+                case 'today':
+                case 'yesterday':
+                case 'custom':
+                    ccmn.totalChart.data.datasets[0].data = connected;
+                    ccmn.totalChart.data.datasets[1].data = passerby;
+                    ccmn.totalChart.data.datasets[2].data = visitor;
+                    ccmn.totalChart.data.labels = ccmn.getTimeArray(24);
+                break;
+
+                case '3days':
+                    data1 = [];
+                    data2 = [];
+                    data3 = [];
+
+                    for (day in data.connected)
+                        for (index in data.connected[day])
+                            data1.push(data.connected[day][index])
+
+                    for (day in data.passerby)
+                        for (index in data.passerby[day])
+                            data2.push(data.passerby[day][index])
+
+                    for (day in data.visitor)
+                        for (index in data.visitor[day])
+                            data3.push(data.visitor[day][index])
+
+                    ccmn.totalChart.data.datasets[0].data = data1;
+                    ccmn.totalChart.data.datasets[1].data = data2;
+                    ccmn.totalChart.data.datasets[2].data = data3;
+                    ccmn.totalChart.data.labels = ccmn.getTimeArray(data.connected);
+                break;
+
+                case 'lastweek':
+                case 'lastmonth':
+                    data1 = Object.values(data.connected);
+                    data2 = Object.values(data.passerby);
+                    data3 = Object.values(data.visitor);
+                    labels = Object.keys(data.connected);
+
+                    if (data1.length > 7) {
+                        data1.shift();
+                    }
+                    if (data2.length > 7) {
+                        data2.shift();
+                    }
+                    if (data3.length > 7) {
+                        data3.shift();
+                    }
+                    if (labels.length > 7) {
+                        labels.shift();
+                    }
+
+                    ccmn.totalChart.data.datasets[0].data = data1;
+                    ccmn.totalChart.data.datasets[1].data = data2;
+                    ccmn.totalChart.data.datasets[2].data = data3;
+                    ccmn.totalChart.data.labels = labels;
+                break;
+            }
         }
         ccmn.totalChart.update();
     },
@@ -366,18 +426,35 @@ var ccmn = {
         });
     },
 
-    setManufacturers: function(data) {
-        console.log(data);
+    setManufacturers: function(response) {
+        data = {
+            datasets: [{
+                backgroundColor: [
+                            '#009688',
+                            '#4CAF50',
+                            '#8BC34A',
+                            '#CDDC39',
+                            '#FFEB3B',
+                            '#FFC107',
+                            '#FF9800',
+                            '#FF5722',
+                            '#FF6E40',
+                            '#FF9E80'
+                            ],
+                data: []
+            }],
 
-        chart_data = {
-            labels: ['one', 'two'],
-            datasets: [[342,34234,344],[23,43,43]],
+            labels: []
         }
 
-        ccmn.manufactChart.data.datasets = chart_data.datasets;
-        ccmn.manufactChart.data.labels = chart_data.labels;
+        for (el in response) {
+            data.labels.push(response[el][0])
+            data.datasets[0].data.push(response[el][1])
+        }
+
+        ccmn.manufactChart.data.labels = data.labels;
+        ccmn.manufactChart.data.datasets = data.datasets;
         ccmn.manufactChart.update();
-        console.log(ccmn.manufactChart);
     },
 
     getTimeArray : function(range) {
@@ -395,8 +472,9 @@ var ccmn = {
         } else if (typeof(range) == typeof({})) {
             keys = Object.keys(range);
 
+
+
             for (key in keys) {
-                console.log();
                 for(var i = 0; i < Object.keys(range[keys[key]]).length; i++) {
                     if (i < 10)
                         item = keys[key] + ' 0' + i + '.00';
@@ -442,6 +520,7 @@ function make_datasets(options, data, dataset_options) {
             backgroundColor: options[label]['color'],
             borderColor: options[label]['borderColor'],
             borderWidth: 1,
+            fill: false,
         };
 
         for (index in data)

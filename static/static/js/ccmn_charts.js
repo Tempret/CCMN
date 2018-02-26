@@ -9,27 +9,27 @@ $(document).ready(function() {
     ccmn.totalChart = new Chart(ctx, {
         type: 'bar',
         data: {
-            labels: ccmn.getTimeArray(24),
+            labels: [],
             datasets: [
                 {
                     label: 'connected visitors',
-                    data: ccmn.getRandomValues(0, 0, 24),
-                    backgroundColor: ccmn.getColorArray('rgba(255, 99, 132, 0.2)', 24),
-                    borderColor: ccmn.getColorArray('rgba(255,99,132,1)', 24),
+                    data: [],
+                    backgroundColor: ccmn.getColorArray('rgba(255, 99, 132, 0.2)', 24 * 3),
+                    borderColor: ccmn.getColorArray('rgba(255,99,132,1)', 24 * 3),
                     borderWidth: 1
                 },
                 {
                     label: 'passerby visitors',
-                    data: ccmn.getRandomValues(0, 0, 24),
-                    backgroundColor: ccmn.getColorArray('rgba(54, 162, 235, 0.2)', 24),
-                    borderColor: ccmn.getColorArray('rgba(54, 162, 235, 1)', 24),
+                    data: [],
+                    backgroundColor: ccmn.getColorArray('rgba(54, 162, 235, 0.2)', 24 * 3),
+                    borderColor: ccmn.getColorArray('rgba(54, 162, 235, 1)', 24 * 3),
                     borderWidth: 1
                 },
                 {
                     label: 'visitors',
-                    data: ccmn.getRandomValues(0, 0, 24),
-                    backgroundColor: ccmn.getColorArray('rgba(255, 206, 86, 0.2)', 24),
-                    borderColor: ccmn.getColorArray('rgba(255, 206, 86, 1)', 24),
+                    data: [],
+                    backgroundColor: ccmn.getColorArray('rgba(255, 206, 86, 0.2)', 24 * 3),
+                    borderColor: ccmn.getColorArray('rgba(255, 206, 86, 1)', 24 * 3),
                     borderWidth: 1
                 }
             ]
@@ -50,6 +50,11 @@ $(document).ready(function() {
         type: 'line',
         data: {},
         options: {
+            elements: {
+                line: {
+                    tension: 0, // disables bezier curves
+                }
+            },
             scales: {
                 yAxes: [{
                     ticks: {
@@ -65,6 +70,12 @@ $(document).ready(function() {
         type: 'line',
         data: {},
         options: {
+            elements: {
+                line: {
+                    tension: 0, // disables bezier curves
+                }
+            },
+
             scales: {
                 yAxes: [{
                     ticks: {
@@ -75,18 +86,31 @@ $(document).ready(function() {
         }
     });
 
-    var manufactChart = document.getElementById("manufactChact").getContext('2d');
-    ccmn.manufactChart = new Chart(repeat_chart, {
+    var manufact_chart = document.getElementById('manufactChact').getContext('2d');
+    ccmn.manufactChart = new Chart(manufact_chart, {
+        // The type of chart we want to create
         type: 'doughnut',
-        data: {},
+
+        // The data for our dataset
+        data: {
+            datasets: [
+            {
+                data: [],
+                backgroundColor: ['rgb(0, 255, 0)', 'rgb(0, 255, 225)', 'rgb(255, 23, 225)']
+            }],
+            labels: []
+        },
+
+        // Configuration options go here
         options: {
-//            scales: {
-//                yAxes: [{
-//                    ticks: {
-//                        beginAtZero:true
-//                    }
-//                }]
-//            }
+            cutoutPercentage: 60,
+            legend: {
+                position: 'right',
+                fullWidth: false,
+                labels: {
+                    fontSize: 12,
+                }
+            }
         }
     });
 
